@@ -22,17 +22,16 @@
 ;; will be narrowed at exit.
 (defun display-slide ()
   (setq here (point))
-  (if (re-search-backward "^\C-l$" (point-min) t)
+  (if (re-search-backward "^\C-l$" nil t)
       (beginning-of-line 2)
       (goto-char (point-min)))
   (setq start (point))
-  (if (re-search-forward "^\C-l$" (point-max) t)
+  (if (re-search-forward "^\C-l$" nil t)
       (beginning-of-line nil)
       (goto-char (point-max)))
   (narrow-to-region start (point))
   (goto-char (point-min))
-  (recenter)
-  (goto-char (point-max)))
+  (set-window-start nil (point)))
 
 ;; Define the mode.
 ;; When mode is activated,
@@ -44,24 +43,26 @@
   nil " Slides" (slide-build-mode-map)
   (widen)
   (if slide-mode
-      (display-slide)))
+      (progn
+	(delete-other-windows)
+	(display-slide))))
 
 ;; move to the next slide
 (defun next-slide ()
   "Go to next slide."
   (interactive)
   (widen)
-  (if (re-search-forward "^\C-l$" (point-max) t)
-      (progn
-	(beginning-of-line 2)
-	(display-slide))))
+  (if (re-search-forward "^\C-l$" nil t)
+      (beginning-of-line 2)
+      (point-max))
+  (display-slide))
 
 ;; move to the previous slide
 (defun previous-slide ()
   "Go to previous slide."
   (interactive)
   (widen)
-  (if (re-search-backward "^\C-l$" (point-min) t)
-      (progn
-       (beginning-of-line nil)
-       (display-slide))))
+  (if (re-search-backward "^\C-l$" nil t)
+      (beginning-of-line nil)
+      (point-min))
+  (display-slide))
