@@ -11,61 +11,14 @@
 ;; are user-defined subsets of a buffer.
 ;; Bart Massey 2008/4/17
 
-;; The page separator string.
-(defvar page-mode-separator "\C-l"
-  "The page separator string.")
-
-(defun page-mode-make-separator-pattern (SEP)
-  "Make SEP into a line pattern with optional trailing whitespace."
-  (concat "^" SEP "[ \C-i]*$"))
-
-;; The page separator pattern.
-(defvar page-mode-separator-pattern
-  (page-mode-make-separator-pattern page-mode-separator)
-  "Regexp describing the page separator line.
-This expression currently must start with ^ and end with $,
-thus marking an entire line.")
-
-(defun page-mode-set-separator (SEP)
-  "Set page-mode-separator to SEP.
-Updates page-mode-separator-pattern."
-  (interactive "sSeparator: ")
-  (setq page-mode-separator SEP)
-  (setq page-mode-separator-pattern
-	(page-mode-make-separator-pattern SEP)))
-
 (defun page-mode-build-keymap ()
   "Build the mode keymap for page mode."
   (let  ((map (make-keymap)))
-    (define-key map "\C-c\C-n" 'page-mode-next-page)
-    (define-key map "\C-c\C-p" 'page-mode-previous-page)
+    (define-key map "\C-c\C-n" 'next-page)
+    (define-key map "\C-c\C-p" 'prev-page)
     (define-key map "\C-cq" 'page-mode)
-    (define-key map "\C-cs" 'page-mode-split-page)
+    (define-key map "\C-cs" 'split-page)
     map))
-
-(defun page-mode-search-backward ()
-  "Back up to previous page separator."
-  (re-search-backward page-mode-separator-pattern nil t))
-
-(defun page-mode-search-forward ()
-  "Move forward to end of current page." 
-  (re-search-forward page-mode-separator-pattern nil t))
-
-;; Actually show the current page.
-;; Must be widened at entry,
-;; will be narrowed at exit.
-(defun page-mode-show-current ()
-  (let (start (here (point)))
-    (if (page-mode-search-backward)
-	(beginning-of-line 2)
-        (goto-char (point-min)))
-    (setq start (point))
-    (if (page-mode-search-forward)
-	(beginning-of-line nil)
-        (goto-char (point-max)))
-    (narrow-to-region start (point))
-    (goto-char (point-min))
-    (set-window-start nil (point))))
 
 (defun page-mode-setup ()
   "Setup for entering or leaving page mode."
@@ -73,7 +26,7 @@ Updates page-mode-separator-pattern."
       (progn
 	(delete-other-windows)
 	(widen)
-	(page-mode-show-current))
+	(narrow-to-page))
       (widen)))
 
 ;; Define the mode.
@@ -84,40 +37,37 @@ Updates page-mode-separator-pattern."
 (define-minor-mode page-mode
   "Toggle minor mode for display of pages."
   nil " Page" (page-mode-build-keymap)
-  (make-variable-buffer-local 'page-mode-separator)
-  (make-variable-buffer-local 'page-mode-separator-pattern)
   (page-mode-setup))
 
 ;; move to the next page
-(defun page-mode-next-page ()
+(defun next-page ()
   "Go to next page."
   (interactive)
   (widen)
-  (if (page-mode-search-forward)
-      (beginning-of-line 2))
-  (page-mode-show-current))
+  (forward-page)
+  (narrow-to-page))
 
 ;; move to the previous page
-(defun page-mode-previous-page ()
+(defun prev-page ()
   "Go to previous page."
   (interactive)
   (widen)
-  (if (page-mode-search-backward)
-      (beginning-of-line nil))
-  (page-mode-show-current))
+  (backward-page 1)
+  (narrow-to-page))
 
-;; split page at cursor
-(defun page-mode-split-page ()
+(defun split-page ()
   "Split page at cursor.
 Views top portion of split."
   (interactive)
   (widen)
-  (let ((ipoint (point)))
+  (let ((ipoint (point))
+	(page-delimiter-string
+	 (substring page-delimiter 1)))
     (beginning-of-line nil)
     (if (not (= (point) ipoint))
 	(progn
 	  (goto-char ipoint)
 	  (insert "\n")))
-    (insert page-mode-separator "\n")
+    (insert page-delimiter-string "\n")
     (goto-char ipoint)
-    (page-mode-show-current)))
+    (narrow-to-page)))
