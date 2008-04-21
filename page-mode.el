@@ -83,8 +83,8 @@ Updates page-mode-separator-pattern."
 (define-minor-mode page-mode
   "Toggle minor mode for display of pages."
   nil " Page" (page-mode-build-keymap)
-  (make-variable-buffer-local page-mode-separator)
-  (make-variable-buffer-local page-mode-separator-pattern)
+  (make-variable-buffer-local 'page-mode-separator)
+  (make-variable-buffer-local 'page-mode-separator-pattern)
   (page-mode-setup))
 
 ;; move to the next page
