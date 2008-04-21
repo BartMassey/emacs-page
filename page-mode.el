@@ -42,11 +42,11 @@ Updates page-mode-separator-pattern."
     (define-key map "\C-cs" 'page-mode-set-separator)
     map))
 
-(define page-mode-search-backward ()
+(defun page-mode-search-backward ()
   "Back up to previous page separator."
   (re-search-backward page-mode-separator-pattern nil t))
 
-(define page-mode-search-forward ()
+(defun page-mode-search-forward ()
   "Move forward to end of current page." 
   (re-search-forward page-mode-separator-pattern nil t))
 
@@ -66,7 +66,7 @@ Updates page-mode-separator-pattern."
     (goto-char (point-min))
     (set-window-start nil (point))))
 
-(define page-mode-setup ()
+(defun page-mode-setup ()
   "Setup for entering or leaving page mode."
   (if page-mode
       (progn
