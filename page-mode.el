@@ -21,7 +21,7 @@
 
 ;; The page separator pattern.
 (defvar page-mode-separator-pattern
-  (page-mode-make-seperator-pattern page-mode-separator)
+  (page-mode-make-separator-pattern page-mode-separator)
   "Regexp describing the page separator line.
 This expression currently must start with ^ and end with $,
 thus marking an entire line.")
@@ -32,7 +32,7 @@ Updates page-mode-separator-pattern."
   (interactive "s" "Separator: ")
   (setq page-mode-separator SEP)
   (setq page-mode-separator-pattern
-	(page-mode-make-seperator-pattern SEP)))
+	(page-mode-make-separator-pattern SEP)))
 
 (defun page-mode-build-keymap ()
   "Build the mode keymap for page mode."
