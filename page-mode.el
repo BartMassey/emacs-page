@@ -18,6 +18,8 @@
     (define-key map "\C-c\C-p" 'prev-page)
     (define-key map "\C-cq" 'page-mode)
     (define-key map "\C-cs" 'split-page)
+    (define-key map "\C-cn" 'new-page)
+    (define-key map "\C-ci" 'insert-page)
     map))
 
 (defun page-mode-setup ()
@@ -52,22 +54,52 @@
   "Go to previous page."
   (interactive)
   (widen)
-  (backward-page 1)
+  (backward-page 2)
   (narrow-to-page))
 
-(defun split-page ()
-  "Split page at cursor.
-Views top portion of split."
-  (interactive)
-  (widen)
-  (let ((ipoint (point))
-	(page-delimiter-string
-	 (substring page-delimiter 1)))
+(defun insert-page-split ()
+  "Insert a page split at point.
+The page-delimiter variable is assumed to point at a regexp
+consisting of a string with a preceding ^.  The page split
+is assumed to be that string on a line by itself. Leaves
+point at the start of the new page."
+  (let ((ipoint (point)))
     (beginning-of-line nil)
-    (if (not (= (point) ipoint))
+    (if (not (= ipoint (point)))
 	(progn
 	  (goto-char ipoint)
-	  (insert "\n")))
-    (insert page-delimiter-string "\n")
-    (goto-char ipoint)
-    (narrow-to-page)))
+	  (insert "\n"))))
+  (insert (substring page-delimiter 1) "\n"))
+
+
+(defun split-page ()
+  "Split page at point.
+Leaves point at start of new page."
+  (interactive)
+  (widen)
+  (insert-page-split)
+  (narrow-to-page))
+
+(defun new-page ()
+  "Append a new page after the current page and enter it."
+  (interactive)
+  (widen)
+  (backward-page)
+  (forward-page)
+  (beginning-of-line 2)
+  (insert-page-split)
+  (backward-page 2)
+  (insert "\n")
+  (narrow-to-page))
+
+(defun insert-page ()
+  "Insert a new page before the current page and enter it."
+  (interactive)
+  (widen)
+  (backward-page)
+  (if (not (= (point) (point-min)))
+      (beginning-of-line 2))
+  (insert-page-split)
+  (backward-page 2)
+  (insert "\n")
+  (narrow-to-page))
