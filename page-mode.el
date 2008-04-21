@@ -29,7 +29,7 @@ thus marking an entire line.")
 (defun page-mode-set-separator (SEP)
   "Set page-mode-separator to SEP.
 Updates page-mode-separator-pattern."
-  (interactive "s" "Separator: ")
+  (interactive "sSeparator: ")
   (setq page-mode-separator SEP)
   (setq page-mode-separator-pattern
 	(page-mode-make-separator-pattern SEP)))
