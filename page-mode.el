@@ -39,7 +39,8 @@ Updates page-mode-separator-pattern."
   (let  ((map (make-keymap)))
     (define-key map "\C-c\C-n" 'page-mode-next-page)
     (define-key map "\C-c\C-p" 'page-mode-previous-page)
-    (define-key map "\C-cs" 'page-mode-set-separator)
+    (define-key map "\C-cq" 'page-mode)
+    (define-key map "\C-cs" 'page-mode-split-page)
     map))
 
 (defun page-mode-search-backward ()
@@ -104,3 +105,19 @@ Updates page-mode-separator-pattern."
   (if (page-mode-search-backward)
       (beginning-of-line nil))
   (page-mode-show-current))
+
+;; split page at cursor
+(defun page-mode-split-page ()
+  "Split page at cursor.
+Views top portion of split."
+  (interactive)
+  (widen)
+  (let ((ipoint (point)))
+    (beginning-of-line nil)
+    (if (not (= (point) ipoint))
+	(progn
+	  (goto-char ipoint)
+	  (insert "\n")))
+    (insert page-mode-separator "\n")
+    (goto-char ipoint)
+    (page-mode-show-current)))
