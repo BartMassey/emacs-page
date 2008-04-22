@@ -30,7 +30,7 @@
   "Setup for entering or leaving page mode."
   (if page-mode
       (progn
-	(delete-other-windows)
+	(require 'page)
 	(widen)
 	(narrow-to-page))
       (widen)))
