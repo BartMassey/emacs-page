@@ -24,6 +24,7 @@
     (define-key map "\C-c>" 'last-page)
     (define-key map "\C-cg" 'goto-page)
     (define-key map "\C-c=" 'what-page)
+    (define-key map "\C-xu" 'page-global-undo)
     map))
 
 (defun page-mode-setup ()
@@ -137,4 +138,11 @@ Leaves point at start of new page."
   (goto-char (point-min))
   (if (> PAGENUMBER 1)
       (forward-page (- PAGENUMBER 1)))
+  (narrow-to-page))
+
+(defun page-global-undo (&optional ARG)
+  "Undo even actions taken on other pages."
+  (interactive "P")
+  (widen)
+  (advertised-undo ARG)
   (narrow-to-page))
