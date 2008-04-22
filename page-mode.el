@@ -20,6 +20,10 @@
     (define-key map "\C-cs" 'split-page)
     (define-key map "\C-cn" 'new-page)
     (define-key map "\C-ci" 'insert-page)
+    (define-key map "\C-c<" 'first-page)
+    (define-key map "\C-c>" 'last-page)
+    (define-key map "\C-cg" 'goto-page)
+    (define-key map "\C-c=" 'what-page)
     map))
 
 (defun page-mode-setup ()
@@ -99,11 +103,38 @@ Leaves point at start of new page."
 (defun insert-page ()
   "Insert a new page before the current page and enter it."
   (interactive)
-  (narrow-to-page)
+  (establish-page-mode)
   (goto-char (point-min))
   (insert-page-split)
   (goto-char (point-min))
   (insert "\n")
   (forward-line -1)
   (widen)
+  (narrow-to-page))
+
+(defun first-page ()
+  "Go to the first page."
+  (interactive)
+  (establish-page-mode)
+  (widen)
+  (goto-char (point-min))
+  (narrow-to-page))
+
+(defun last-page ()
+  "Go to the last page."
+  (interactive)
+  (establish-page-mode)
+  (widen)
+  (goto-char (point-max))
+  (narrow-to-page)
+  (goto-char (point-min)))
+
+(defun goto-page (PAGENUMBER)
+  "Go to page PAGENUMBER."
+  (interactive "p")
+  (establish-page-mode)
+  (widen)
+  (goto-char (point-min))
+  (if (> PAGENUMBER 1)
+      (forward-page (- PAGENUMBER 1)))
   (narrow-to-page))
