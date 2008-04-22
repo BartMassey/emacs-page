@@ -64,42 +64,46 @@ consisting of a string with a preceding ^.  The page split
 is assumed to be that string on a line by itself. Leaves
 point at the start of the new page."
   (let ((ipoint (point)))
-    (beginning-of-line nil)
+    (forward-line 0)
     (if (not (= ipoint (point)))
 	(progn
 	  (goto-char ipoint)
 	  (insert "\n"))))
   (insert (substring page-delimiter 1) "\n"))
 
+(defun establish-page-mode ()
+  "Enter page mode if not already there."
+  (if (not (page-mode))
+      (page-mode)))
 
 (defun split-page ()
   "Split page at point.
 Leaves point at start of new page."
   (interactive)
-  (widen)
+  (establish-page-mode)
   (insert-page-split)
+  (widen)
   (narrow-to-page))
 
 (defun new-page ()
   "Append a new page after the current page and enter it."
   (interactive)
-  (widen)
-  (backward-page)
-  (forward-page)
-  (beginning-of-line 2)
+  (establish-page-mode)
+  (goto-char (point-max))
   (insert-page-split)
-  (backward-page 2)
   (insert "\n")
+  (forward-line -1)
+  (widen)
   (narrow-to-page))
 
 (defun insert-page ()
   "Insert a new page before the current page and enter it."
   (interactive)
-  (widen)
-  (backward-page)
-  (if (not (= (point) (point-min)))
-      (beginning-of-line 2))
+  (narrow-to-page)
+  (goto-char (point-min))
   (insert-page-split)
-  (backward-page 2)
+  (goto-char (point-min))
   (insert "\n")
+  (forward-line -1)
+  (widen)
   (narrow-to-page))
