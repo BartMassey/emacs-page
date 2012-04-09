@@ -1,3 +1,5 @@
+;;; page-mode.el --- Limit visibility to a page
+
 ;; Copyright (C) 2008 Bart Massey
 ;; ALL RIGHTS RESERVED
 ;; 
@@ -5,11 +7,14 @@
 ;; Please see the file COPYING in the source
 ;; distribution of this software for license terms.
 
-;; "Page Mode"
+;;; Commentary:
+
 ;; Minor mode for displaying or working on just
 ;; a page of content at a time in Emacs, where pages
 ;; are user-defined subsets of a buffer.
 ;; Bart Massey 2008/4/17
+
+;;; Code:
 
 (defun page-mode-build-keymap ()
   "Build the mode keymap for page mode."
@@ -146,3 +151,5 @@ Leaves point at start of new page."
   (widen)
   (advertised-undo ARG)
   (narrow-to-page))
+
+(provide 'page-mode)
