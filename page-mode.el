@@ -55,6 +55,7 @@
 (defun next-page ()
   "Go to next page."
   (interactive)
+  (page-mode t)
   (widen)
   (forward-page)
   (narrow-to-page))
@@ -63,6 +64,7 @@
 (defun prev-page ()
   "Go to previous page."
   (interactive)
+  (page-mode t)
   (widen)
   (backward-page 2)
   (narrow-to-page))
@@ -72,7 +74,7 @@
 The page-delimiter variable is assumed to point at a regexp
 consisting of a string with a preceding ^.  The page split
 is assumed to be that string on a line by itself. Leaves
-point at the start of the new page."
+point at the start of the later page."
   (let ((ipoint (point)))
     (forward-line 0)
     (if (not (= ipoint (point)))
@@ -143,8 +145,10 @@ Leaves point at start of new page."
 (defun page-global-undo (&optional ARG)
   "Undo even actions taken on other pages."
   (interactive "P")
-  (widen)
+  (if page-mode
+      (widen))
   (advertised-undo ARG)
-  (narrow-to-page))
+  (if page-mode
+      (narrow-to-page)))
 
 (provide 'page-mode)
