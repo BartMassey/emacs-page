@@ -81,16 +81,11 @@ point at the start of the new page."
 	  (insert "\n"))))
   (insert (substring page-delimiter 1) "\n"))
 
-(defun establish-page-mode ()
-  "Enter page mode if not already there."
-  (if (not (page-mode))
-      (page-mode)))
-
 (defun split-page ()
   "Split page at point.
 Leaves point at start of new page."
   (interactive)
-  (establish-page-mode)
+  (page-mode t)
   (insert-page-split)
   (widen)
   (narrow-to-page))
@@ -98,7 +93,7 @@ Leaves point at start of new page."
 (defun new-page ()
   "Append a new page after the current page and enter it."
   (interactive)
-  (establish-page-mode)
+  (page-mode t)
   (goto-char (point-max))
   (insert-page-split)
   (insert "\n")
@@ -109,7 +104,7 @@ Leaves point at start of new page."
 (defun insert-page ()
   "Insert a new page before the current page and enter it."
   (interactive)
-  (establish-page-mode)
+  (page-mode t)
   (goto-char (point-min))
   (insert-page-split)
   (goto-char (point-min))
@@ -121,7 +116,7 @@ Leaves point at start of new page."
 (defun first-page ()
   "Go to the first page."
   (interactive)
-  (establish-page-mode)
+  (page-mode t)
   (widen)
   (goto-char (point-min))
   (narrow-to-page))
@@ -129,7 +124,7 @@ Leaves point at start of new page."
 (defun last-page ()
   "Go to the last page."
   (interactive)
-  (establish-page-mode)
+  (page-mode t)
   (widen)
   (goto-char (point-max))
   (narrow-to-page)
@@ -138,7 +133,7 @@ Leaves point at start of new page."
 (defun goto-page (PAGENUMBER)
   "Go to page PAGENUMBER."
   (interactive "p")
-  (establish-page-mode)
+  (page-mode t)
   (widen)
   (goto-char (point-min))
   (if (> PAGENUMBER 1)
