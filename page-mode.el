@@ -63,6 +63,7 @@
 (defun prev-page ()
   "Go to previous page."
   (interactive)
+  (backward-page)
   (widen)
   (backward-page 2)
   (narrow-to-page))
@@ -88,7 +89,7 @@ point at the start of the new page."
 
 (defun split-page ()
   "Split page at point.
-Leaves point at start of new page."
+Leaves point at start of second page."
   (interactive)
   (establish-page-mode)
   (insert-page-split)
