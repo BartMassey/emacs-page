@@ -73,14 +73,8 @@
 The page-delimiter variable is assumed to point at a regexp
 consisting of a string with a preceding ^.  The page split
 is assumed to be that string on a line by itself. Leaves
-point at the start of the new page."
-  (let ((ipoint (point)))
-    (forward-line 0)
-    (if (not (= ipoint (point)))
-	(progn
-	  (goto-char ipoint)
-	  (insert "\n"))))
-  (insert (substring page-delimiter 1) "\n"))
+point at the start of the second page."
+  (insert "\n" (substring page-delimiter 1) "\n"))
 
 (defun establish-page-mode ()
   "Enter page mode if not already there."
@@ -100,23 +94,17 @@ Leaves point at start of second page."
   "Append a new page after the current page and enter it."
   (interactive)
   (establish-page-mode)
-  (goto-char (point-max))
-  (insert-page-split)
-  (insert "\n")
-  (forward-line -1)
-  (widen)
-  (narrow-to-page))
+  (goto-char (- (point-max) 1))
+  (split-page))
 
 (defun insert-page ()
   "Insert a new page before the current page and enter it."
   (interactive)
   (establish-page-mode)
   (goto-char (point-min))
-  (insert-page-split)
-  (goto-char (point-min))
-  (insert "\n")
-  (forward-line -1)
+  (split-page)
   (widen)
+  (backward-page 2)
   (narrow-to-page))
 
 (defun first-page ()
