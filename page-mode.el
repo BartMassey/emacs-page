@@ -85,7 +85,7 @@ point at the start of the later page."
 
 (defun split-page ()
   "Split page at point.
-Leaves point at start of new page."
+Leaves point at start of second page."
   (interactive)
   (page-mode t)
   (insert-page-split)
@@ -96,23 +96,17 @@ Leaves point at start of new page."
   "Append a new page after the current page and enter it."
   (interactive)
   (page-mode t)
-  (goto-char (point-max))
-  (insert-page-split)
-  (insert "\n")
-  (forward-line -1)
-  (widen)
-  (narrow-to-page))
+  (goto-char (- (point-max) 1))
+  (split-page))
 
 (defun insert-page ()
   "Insert a new page before the current page and enter it."
   (interactive)
   (page-mode t)
   (goto-char (point-min))
-  (insert-page-split)
-  (goto-char (point-min))
-  (insert "\n")
-  (forward-line -1)
+  (split-page)
   (widen)
+  (backward-page 2)
   (narrow-to-page))
 
 (defun first-page ()
