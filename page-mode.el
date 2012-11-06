@@ -48,8 +48,16 @@
 ;; widen.
 (define-minor-mode page-mode
   "Toggle minor mode for display of pages."
-  nil " Page" (page-mode-build-keymap)
+  :init-value nil
+  :lighter (:eval (page-mode-lighter))
+  :keymap (page-mode-build-keymap)
   (page-mode-setup))
+
+(defun page-mode-lighter ()
+  (widen)
+  (let ((npages (how-many "\f" (point-min) (point))))
+    (narrow-to-page)
+    (concat " Page " (format "%d" (+ 1 npages)))))
 
 ;; move to the next page
 (defun next-page ()
