@@ -37,7 +37,6 @@
   (if page-mode
       (progn
 	(require 'page)
-	(widen)
 	(narrow-to-page))
       (widen)))
 
@@ -51,14 +50,27 @@
   nil " Page" (page-mode-build-keymap)
   (page-mode-setup))
 
+;; find the next pagebreak to get to a new page
+(defun skip-pagebreak ()
+  (search-forward-regexp "" nil t))
+
+;; find the previous pagebreak to get to a new page
+(defun skip-pagebreak-backward ()
+  (if (null (search-backward-regexp "" nil t 2))
+      (goto-char (point-min))))
+
 ;; move to the next page
 (defun next-page ()
   "Go to next page."
   (interactive)
-  (page-mode t)
   (widen)
-  (forward-page 1)
-  (narrow-to-page))
+  (let ((ok-narrow (not (= (following-char) 12))))
+    (page-mode t)
+    (if ok-narrow
+        (progn
+          (widen)
+          (skip-pagebreak)
+          (narrow-to-page)))))
 
 ;; move to the previous page
 (defun prev-page ()
@@ -66,7 +78,7 @@
   (interactive)
   (page-mode t)
   (widen)
-  (backward-page 2)
+  (skip-pagebreak-backward)
   (narrow-to-page))
 
 (defun insert-page-split ()
@@ -106,7 +118,7 @@ Leaves point at start of second page."
   (goto-char (point-min))
   (split-page)
   (widen)
-  (backward-page 2)
+  (skip-pagebreak-backward)
   (narrow-to-page))
 
 (defun first-page ()
