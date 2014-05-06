@@ -57,7 +57,7 @@
   (interactive)
   (page-mode t)
   (widen)
-  (forward-page)
+  (forward-page 1)
   (narrow-to-page))
 
 ;; move to the previous page
@@ -131,9 +131,8 @@ Leaves point at start of second page."
   (interactive "p")
   (page-mode t)
   (widen)
-  (goto-char (point-min))
   (if (> PAGENUMBER 1)
-      (forward-page (- PAGENUMBER 1)))
+      (forward-page -1))
   (narrow-to-page))
 
 (defun page-global-undo (&optional ARG)
