@@ -1,4 +1,5 @@
 ;;; page-mode.el --- Limit visibility to a page
+;; License: GPL-3+
 
 ;; Copyright (C) 2008 Bart Massey
 ;; ALL RIGHTS RESERVED
