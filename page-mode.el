@@ -53,34 +53,32 @@
 
 ;; find the next pagebreak to get to a new page
 (defun skip-pagebreak ()
-  (search-forward-regexp "" nil t))
+  (widen)
+  (search-forward-regexp "" nil t)
+  (narrow-to-page))
 
 ;; find the previous pagebreak to get to a new page
 (defun skip-pagebreak-backward ()
-  (if (null (search-backward-regexp "" nil t 2))
-      (goto-char (point-min))))
+  (skip-pagebreak)
+  (widen)
+  (let ((skips (if (= (following-char) 12) 3 2)))
+    (search-backward-regexp "" nil t skips))
+  (narrow-to-page)
+  (goto-char (point-min)))
 
 ;; move to the next page
 (defun next-page ()
   "Go to next page."
   (interactive)
-  (widen)
-  (let ((ok-narrow (not (= (following-char) 12))))
-    (page-mode t)
-    (if ok-narrow
-        (progn
-          (widen)
-          (skip-pagebreak)
-          (narrow-to-page)))))
+  (page-mode t)
+  (skip-pagebreak))
 
 ;; move to the previous page
 (defun prev-page ()
   "Go to previous page."
   (interactive)
   (page-mode t)
-  (widen)
-  (skip-pagebreak-backward)
-  (narrow-to-page))
+  (skip-pagebreak-backward))
 
 (defun insert-page-split ()
   "Insert a page split at point.
@@ -88,22 +86,23 @@ The page-delimiter variable is assumed to point at a regexp
 consisting of a string with a preceding ^.  The page split
 is assumed to be that string on a line by itself. Leaves
 point at the start of the later page."
+  (widen)
   (let ((ipoint (point)))
     (forward-line 0)
     (if (not (= ipoint (point)))
 	(progn
 	  (goto-char ipoint)
 	  (insert "\n"))))
-  (insert (substring page-delimiter 1) "\n"))
+  (insert (substring page-delimiter 1) "\n")
+  (narrow-to-page)
+  (skip-pagebreak))
 
 (defun split-page ()
   "Split page at point.
 Leaves point at start of second page."
   (interactive)
   (page-mode t)
-  (insert-page-split)
-  (widen)
-  (narrow-to-page))
+  (insert-page-split))
 
 (defun new-page ()
   "Append a new page after the current page and enter it."
@@ -118,9 +117,7 @@ Leaves point at start of second page."
   (page-mode t)
   (goto-char (point-min))
   (split-page)
-  (widen)
-  (skip-pagebreak-backward)
-  (narrow-to-page))
+  (skip-pagebreak-backward))
 
 (defun first-page ()
   "Go to the first page."
